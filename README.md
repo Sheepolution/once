@@ -20,11 +20,19 @@ Let's assume your object has the function `foo`, which prints the first argument
 
 ```lua
 function object:update(dt)
-	self.once("foo", "Hello World!")
+	self.once:foo("Hello World!")
 end
 ```
 
 Only on the first frame will foo be called. This can also be done with `self.once:foo("Hello World!")`.
+You can also call once as function and pass either the name of the method or the method directly as first argument.
+
+```lua
+function object:update(dt)
+	self.once("foo", "Hello World!")
+	self.once(self.foo, "Hello World!")
+end
+```
 
 ### free(f, f2, ...)
 
@@ -35,10 +43,10 @@ You can add a second method (`f2`) that, in case `f` was trapped, will be called
 -- When a is pressed, foo will be freed again and bar will be called.
 -- Foo will be called again next frame.
 function object:update(dt)
-	self.once("foo", "Hello World!")
+	self.once:foo("Hello World!")
 
 	if keyPressed("a") then
-		self.once:free("foo", "bar")
+		self.once:free(self.foo, self.bar)
 	end
 end
 ```

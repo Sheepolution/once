@@ -3,35 +3,39 @@ local once = {}
 local noop = function () end
 
 function once.new(obj)
-	return setmetatable({_obj = obj, _used = {}},  once)
+    return setmetatable({_obj = obj, _used = {}},  once)
 end
 
-function once:__index(f)
-	if f == "back" then
-		return once.back
-	elseif self._obj[f] then
-		if not self._used[f] then
-			self._used[f] = true
-			return self._obj[f]
-		end
-	end
-	return noop
+function once:__index(k)
+    local f = self._obj[k]
+    if k == "free" then
+        return once.free
+    elseif f then
+        if not self._used[f] then
+            self._used[f] = true
+            return f
+        end
+    end
+    return noop
 end
 
 function once:__call(f, ...)
-	if not self._used[f] then
-		self._used[f] = true
-		return self._obj[f](self._obj, ...)
-	end
+    f = type(f) == "string" and self._obj[f] or f
+    if not self._used[f] then
+        self._used[f] = true
+        return f(self._obj, ...)
+    end
 end
 
-function once:free(f, bf, ...)
-	if self._used[f] then
-		self._used[f] = nil
-		if bf then
-			return self._obj[bf](self._obj, ...)
-		end
-	end
+function once:free(f, f2, ...)
+    f = type(f) == "string" and self._obj[f] or f
+    f2 = type(f2) == "string" and self._obj[f2] or f2
+    if self._used[f] then
+        self._used[f] = nil
+        if f2 then
+            return f2(self._obj, ...)
+        end
+    end
 end
 
 return once
