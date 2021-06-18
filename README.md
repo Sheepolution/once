@@ -24,8 +24,7 @@ function object:update(dt)
 end
 ```
 
-Only on the first frame will foo be called. This can also be done with `self.once:foo("Hello World!")`.
-You can also call once as function and pass either the name of the method or the method directly as first argument.
+Only on the first frame will foo be called. You can also call once as function and pass either the name of the method or the method directly as first argument.
 
 ```lua
 function object:update(dt)
